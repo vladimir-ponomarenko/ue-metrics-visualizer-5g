@@ -1,0 +1,5 @@
+{
+  "name": "Net_Metrics 5G Dashboard",
+  "description": "Telemetry dashboard for monitoring 5G UE in real-time.",
+  "requestFramePermissions": []
+}

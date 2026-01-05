@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> UE 5G Telemetry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              // Dark Mode
+              "neon-cyan": "#00F0FF",
+              "neon-magenta": "#E000FF",
+
+              // Light Mode
+              "deep-blue": "#0044FF",
+              "deep-violet": "#9900FF",
+
+              // Semantic Colors
+              primary: "#00F0FF",
+              secondary: "#E000FF",
+              accent: "#FF0044",
+              success: "#39FF14",
+              warning: "#FFE600",
+
+              // Backgrounds
+              "bg-light": "#E5E5E5",
+              "bg-dark": "#050505",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#0A0A0A",
+              "border-light": "#000000",
+              "border-dark": "#333333",
+              "text-light": "#000000",
+              "text-dark": "#E0E0E0",
+              "grid-light": "#CCCCCC",
+              "grid-dark": "#111111",
+            },
+            fontFamily: {
+              display: ["'Chakra Petch'", "sans-serif"],
+              mono: ["'Share Tech Mono'", "monospace"],
+            },
+            boxShadow: {
+              'neon-cyan': '0 0 5px #00F0FF, 0 0 10px #00F0FF, 0 0 20px rgba(0, 240, 255, 0.3)',
+              'neon-magenta': '0 0 5px #E000FF, 0 0 10px #E000FF, 0 0 20px rgba(224, 0, 255, 0.3)',
+              'neon-green': '0 0 5px #39FF14, 0 0 10px #39FF14',
+              'neon-red': '0 0 5px #FF0033, 0 0 10px #FF0033',
+              'retro': '4px 4px 0px 0px rgba(0,0,0,0.2)',
+            },
+            backgroundImage: {
+              'cyber-grid': "repeating-linear-gradient(0deg, transparent, transparent 19px, #1a1a1a 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, #1a1a1a 20px)"
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #E5E5E5;
+        background-image: radial-gradient(#999 1px, transparent 1px);
+        background-size: 20px 20px;
+        overflow: hidden;
+      }
+      .dark body {
+        background-color: #050505;
+        background-image: radial-gradient(#333 1px, transparent 1px);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #d1d1d1;
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-left: 1px solid #222;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #0044FF;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #00F0FF;
+      }
+
+      /* Scanline Overlay Effects */
+      .scanline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.05) 50%);
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.3;
+      }
+
+      /* Utilities */
+      .text-glow-cyan { text-shadow: 0 0 10px rgba(0, 240, 255, 0.8); }
+      .text-glow-magenta { text-shadow: 0 0 10px rgba(224, 0, 255, 0.8); }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0",
+    "clsx": "https://esm.sh/clsx@2.1.1",
+    "recharts": "https://esm.sh/recharts@2.12.2",
+    "zustand": "https://esm.sh/zustand@4.5.2",
+    "tailwind-merge": "https://esm.sh/tailwind-merge@2.2.1",
+    "i18next": "https://esm.sh/i18next@23.10.0",
+    "react-i18next": "https://esm.sh/react-i18next@14.0.5",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <div class="scanline"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
