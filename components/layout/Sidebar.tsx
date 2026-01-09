@@ -94,33 +94,41 @@ export const Sidebar: React.FC = () => {
       ) : (
         // Collapsed sidebar
         <div className="w-12 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-grid-line flex flex-col justify-between z-20 shadow-[4px_0_24px_rgba(0,0,0,0.1)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.5)] transition-all duration-300 fixed h-full">
-          <div className="flex flex-col items-center py-4">
-            <Radio className="text-primary w-8 h-8 animate-pulse drop-shadow-[0_0_10px_#00F0FF] mb-4" />
-            
-            <nav className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                  }}
-                  className={clsx(
-                    "group relative p-3 transition-all flex items-center justify-center",
-                    activeTab === item.id
-                      ? "bg-primary/10 border border-primary text-primary shadow-[0_0_15px_rgba(0,240,255,0.2)]"
-                      : "border border-transparent hover:bg-gray-200 dark:hover:bg-[#111] text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
-                  )}
-                  title={item.name}
-                >
-                  <item.icon className={clsx("w-5 h-5 transition-colors", activeTab === item.id ? "text-primary" : "text-gray-500 group-hover:text-black dark:group-hover:text-white")} />
-                  
-                  {/* Active Indicators */}
-                  {activeTab === item.id && (
-                    <div className="absolute top-0 right-0 w-1 h-1/2 border-t border-r border-primary shadow-[0_0_5px_#00F0FF]" />
-                  )}
-                </button>
-              ))}
-            </nav>
+          <div className="flex flex-col justify-between h-full">
+            {/* Logo Area - same as expanded state */}
+            <div className="h-24 flex items-center justify-center border-b border-border-light dark:border-grid-line bg-gray-100 dark:bg-bg-dark relative overflow-hidden group transition-colors duration-300">
+              <div className="absolute inset-0 bg-cyber-grid opacity-10 dark:opacity-20"></div>
+              <div className="flex flex-col items-center relative z-10">
+                <Radio className="text-primary w-8 h-8 animate-pulse drop-shadow-[0_0_10px_#00F0FF]" />
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center py-4 flex-grow">
+              <nav className="flex flex-col gap-2">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                    }}
+                    className={clsx(
+                      "group relative p-3 transition-all flex items-center justify-center",
+                      activeTab === item.id
+                        ? "bg-primary/10 border border-primary text-primary shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                        : "border border-transparent hover:bg-gray-200 dark:hover:bg-[#111] text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                    )}
+                    title={item.name}
+                  >
+                    <item.icon className={clsx("w-5 h-5 transition-colors", activeTab === item.id ? "text-primary" : "text-gray-500 group-hover:text-black dark:group-hover:text-white")} />
+
+                    {/* Active Indicators */}
+                    {activeTab === item.id && (
+                      <div className="absolute top-0 right-0 w-1 h-1/2 border-t border-r border-primary shadow-[0_0_5px_#00F0FF]" />
+                    )}
+                  </button>
+                ))}
+              </nav>
+            </div>
           </div>
 
           <div className="p-2 border-t border-border-light dark:border-grid-line bg-gray-100 dark:bg-bg-dark transition-colors duration-300 flex justify-center">
