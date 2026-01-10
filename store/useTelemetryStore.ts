@@ -9,6 +9,7 @@ interface TelemetryState {
   activeTab: AppTab;
   language: 'en' | 'ru';
   theme: 'dark' | 'light';
+  isSidebarCollapsed: boolean;
 
   addMetric: (metric: ProcessedMetric) => void;
   setHistory: (history: ProcessedMetric[]) => void;
@@ -17,6 +18,7 @@ interface TelemetryState {
   setActiveTab: (tab: AppTab) => void;
   setLanguage: (lang: 'en' | 'ru') => void;
   setTheme: (theme: 'dark' | 'light') => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   clearHistory: () => void;
 }
 
@@ -65,5 +67,6 @@ setTheme: (theme) => {
       set({ theme });
   },
 
+  setSidebarCollapsed: (isCollapsed) => set({ isSidebarCollapsed: isCollapsed }),
   clearHistory: () => set({ history: [], latestMetric: null })
 }));

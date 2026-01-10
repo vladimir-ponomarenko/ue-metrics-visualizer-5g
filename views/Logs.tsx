@@ -11,7 +11,7 @@ export const Logs: React.FC = () => {
   return (
     <div className="h-full pb-10">
       <NeonCard color="warning" className="h-full flex flex-col" title="SYSTEM EVENT LOGS">
-        <div className="flex-1 bg-black border border-[#222] p-4 font-mono text-xs overflow-y-auto custom-scrollbar">
+        <div className="flex-1 bg-black border border-[#222] p-4 font-mono text-xs overflow-y-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-[#333] text-gray-500">

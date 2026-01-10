@@ -13,7 +13,7 @@ import i18n from './utils/i18n';
 
 const App: React.FC = () => {
   useTelemetrySocket();
-  const { status, activeTab, language } = useTelemetryStore();
+  const { status, activeTab, language, isSidebarCollapsed } = useTelemetryStore();
 
   useEffect(() => {
     if (language) {
@@ -33,18 +33,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden font-display selection:bg-primary selection:text-black transition-colors duration-300 bg-background-light dark:bg-bg-dark text-text-light dark:text-gray-300">
+    <div className="relative h-screen overflow-hidden font-display selection:bg-primary selection:text-black transition-colors duration-300 bg-background-light dark:bg-bg-dark text-text-light dark:text-gray-300">
       <Sidebar />
-
-      {/*  */}
-      <main className="flex-1 flex flex-col h-full relative z-10 bg-white/50 dark:bg-black/50">
+      <main className={`${isSidebarCollapsed ? 'ml-12' : 'ml-72'} flex flex-col h-full relative z-0 bg-white/50 dark:bg-black/50 transition-all duration-300 min-w-0`}>
         <Header />
 
-        <div className="flex-1 overflow-y-auto p-6 relative custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-6 relative">
            {/* Disconnection Overlay */}
            {status !== ConnectionStatus.CONNECTED && (
              <div className="absolute top-4 right-4 z-50 pointer-events-none">
-                <div className="border border-accent p-2 bg-black/90 shadow-[0_0_20px_rgba(255,0,51,0.2)] flex items-center gap-2">
+                <div className="border border-accent p-2 bg-white/90 dark:bg-black/90 shadow-[0_0_20px_rgba(255,0,51,0.2)] flex items-center gap-2">
                   <div className="w-2 h-2 bg-accent animate-pulse rounded-full"></div>
                   <span className="font-mono text-accent text-xs font-bold tracking-widest">OFFLINE</span>
                 </div>

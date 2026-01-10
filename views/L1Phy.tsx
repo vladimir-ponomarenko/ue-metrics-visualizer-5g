@@ -147,7 +147,7 @@ export const L1Phy: React.FC = () => {
 
      <div className="col-span-12 lg:col-span-6">
           <NeonCard color="primary" className="h-[350px]" title="SSB BEAM MONITOR">
-              <div className="overflow-y-auto custom-scrollbar h-full pr-2">
+              <div className="overflow-y-auto h-full pr-2">
                   <table className="w-full text-left font-mono text-xs border-collapse">
                       <thead>
                           <tr className="border-b border-gray-300 dark:border-[#333]">
