@@ -19,6 +19,12 @@ export interface ProcessedMetric {
   dl_err_total: number;
   ul_ok_total: number;
   ul_err_total: number;
+
+  bad_dci: number;
+  ul_code_rate: number;
+  ul_bps: number;
+  ul_rb_tb: number;
+  ul_sym_tb: number;
 }
 
 export interface LogEntry {
