@@ -41,6 +41,28 @@ export const L1Phy: React.FC = () => {
         </NeonCard>
       </div>
 
+      {/* === Row 2 === */}
+      <div className="col-span-12 sm:col-span-3">
+          <NeonCard color="primary" title="MIMO RANK">
+              <DigitalDisplay value={latestMetric?.rank ?? 0} color={isDark ? "text-primary" : "text-blue-600"} size="md" />
+          </NeonCard>
+      </div>
+      <div className="col-span-12 sm:col-span-3">
+          <NeonCard color="secondary" title="N0 NOISE">
+              <DigitalDisplay value={(latestMetric?.n0_power ?? 0).toFixed(1)} unit="dBm" color={isDark ? "text-secondary" : "text-purple-600"} size="md" />
+          </NeonCard>
+      </div>
+      <div className="col-span-12 sm:col-span-3">
+          <NeonCard color="success" title="RX GAIN">
+              <DigitalDisplay value={latestMetric?.rx_gain ?? 0} unit="dB" color={isDark ? "text-success" : "text-green-600"} size="md" />
+          </NeonCard>
+      </div>
+      <div className="col-span-12 sm:col-span-3">
+          <NeonCard color="warning" title="N_TA OFFSET">
+              <DigitalDisplay value={latestMetric?.nta_offset ?? 0} unit="samples" color={isDark ? "text-warning" : "text-yellow-600"} size="md" />
+          </NeonCard>
+      </div>
+
       {/* CQI History */}
       <div className="col-span-12 lg:col-span-6">
         <NeonCard color="secondary" className="h-[350px]" title={t('chart_cqi')}>
@@ -117,6 +139,37 @@ export const L1Phy: React.FC = () => {
            </ResponsiveContainer>
         </NeonCard>
       </div>
+
+     <div className="col-span-12 lg:col-span-6">
+          <NeonCard color="primary" className="h-[350px]" title="SSB BEAM MONITOR">
+              <div className="overflow-y-auto custom-scrollbar h-full pr-2">
+                  <table className="w-full text-left font-mono text-xs border-collapse">
+                      <thead>
+                          <tr className="border-b border-gray-300 dark:border-[#333]">
+                              <th className="py-2">BEAM ID</th>
+                              <th className="py-2 text-primary">RSRP (dBm)</th>
+                              <th className="py-2 text-secondary">SINR (dB)</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {latestMetric?.ssb_rsrp_beams.map((rsrp, index) => {
+                              const sinr = latestMetric.ssb_sinr_beams[index];
+                              // Отображаем только активные лучи
+                              if (rsrp === 0 || rsrp < -140) return null;
+                              return (
+                                  <tr key={index} className="border-b border-gray-200 dark:border-[#222]">
+                                      <td className="py-2 text-gray-500">{`Beam #${index}`}</td>
+                                      <td className={`py-2 ${rsrp > -90 ? 'text-success' : 'text-warning'}`}>{rsrp.toFixed(1)}</td>
+                                      <td className={`py-2 ${sinr > 10 ? 'text-secondary' : 'text-gray-400'}`}>{sinr.toFixed(1)}</td>
+                                  </tr>
+                              );
+                          })}
+                      </tbody>
+                  </table>
+              </div>
+          </NeonCard>
+      </div>
+
     </div>
   );
 };

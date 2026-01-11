@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTelemetryStore } from '../../store/useTelemetryStore';
 import { ConnectionStatus } from '../../types';
-import { Activity, Wifi, AlertTriangle, Layers, Hash, Sun, Moon } from 'lucide-react';
+import { Activity, Wifi, AlertTriangle, Layers, Hash, Sun, Moon, Radio} from 'lucide-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
@@ -53,6 +53,11 @@ export const Header: React.FC = () => {
             <span className="text-gray-500 font-bold group-hover:text-primary dark:group-hover:text-primary transition-colors">RNTI:</span>
             <span className="text-black dark:text-white w-12 text-right font-mono">{latestMetric ? `0x${latestMetric.rnti.toString(16).toUpperCase()}` : '---'}</span>
           </div>
+          <div className="px-3 py-1.5 border border-gray-300 dark:border-[#333] bg-white dark:bg-[#0C0C0C] flex items-center gap-2 group hover:border-accent dark:hover:border-accent transition-colors duration-300 cursor-default">
+            <Radio className="w-3 h-3 text-accent" />
+            <span className="text-gray-500 font-bold group-hover:text-accent dark:group-hover:text-accent transition-colors">PCI:</span>
+            <span className="text-black dark:text-white w-8 text-right font-mono">{latestMetric?.pci ?? '---'}</span>
+          </div>
           <div className="px-3 py-1.5 border border-gray-300 dark:border-[#333] bg-white dark:bg-[#0C0C0C] flex items-center gap-2 group hover:border-secondary dark:hover:border-secondary transition-colors duration-300 cursor-default">
             <Layers className="w-3 h-3 text-secondary" />
             <span className="text-gray-500 font-bold group-hover:text-secondary dark:group-hover:text-secondary transition-colors">FRAME:</span>
@@ -67,7 +72,7 @@ export const Header: React.FC = () => {
             <span className="text-black dark:text-white font-bold group-hover:text-primary dark:group-hover:text-primary transition-colors text-right font-mono">{time.toLocaleTimeString('en-US', { hour12: false })}</span>
           </div>
         </div>
-        
+
         {/* Language Toggle Button */}
         <button
             onClick={() => {

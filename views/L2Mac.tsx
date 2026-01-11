@@ -47,7 +47,7 @@ export const L2Mac: React.FC = () => {
         </NeonCard>
       </div>
 
-      {/* New Metrics Row */}
+      {/* Metrics Row */}
       <div className="col-span-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
         {/* Bad DCI */}
         <NeonCard color="warning" title="BAD DCI">

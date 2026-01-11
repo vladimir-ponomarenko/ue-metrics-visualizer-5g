@@ -25,6 +25,14 @@ export interface ProcessedMetric {
   ul_bps: number;
   ul_rb_tb: number;
   ul_sym_tb: number;
+
+  pci: number;                  // Physical Cell ID
+  n0_power: number;             // Noise Power
+  rank: number;                 // MIMO Rank
+  rx_gain: number;              // Total RX Gain
+  nta_offset: number;           // N_TA Offset
+  ssb_rsrp_beams: number[];     // Array of 4 RSRP values
+  ssb_sinr_beams: number[];     // Array of 4 SINR values
 }
 
 export interface LogEntry {
