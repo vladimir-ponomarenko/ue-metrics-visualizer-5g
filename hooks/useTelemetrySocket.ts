@@ -16,7 +16,13 @@ export const useTelemetrySocket = () => {
       try {
           const response = await fetch(API_URL);
           if (!response.ok) throw new Error('Network response was not ok');
-          const data: ProcessedMetric[] = await response.json();
+          const rawData: any[] = await response.json();
+
+          const data: ProcessedMetric[] = rawData.map(item => ({
+            ...item,
+            antennasRx: item.antennas_rx,
+          }));
+
           console.log(`[Telemetry] Loaded ${data.length} historical points`);
           setHistory(data);
           addLog({
@@ -65,7 +71,11 @@ export const useTelemetrySocket = () => {
     ws.onmessage = (event) => {
       if (!isMounted.current) return;
       try {
-        const data: ProcessedMetric = JSON.parse(event.data);
+        const rawData = JSON.parse(event.data);
+        const data: ProcessedMetric = {
+          ...rawData,
+          antennasRx: rawData.antennas_rx,
+        };
         addMetric(data);
         checkThresholds(data, addLog);
       } catch (err) {

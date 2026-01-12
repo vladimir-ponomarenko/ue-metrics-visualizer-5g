@@ -25,19 +25,24 @@ export const L1Phy: React.FC = () => {
   return (
     <div className="grid grid-cols-12 gap-6 pb-10">
       {/* Cards */}
-      <div className="col-span-12 sm:col-span-4">
+      <div className="col-span-12 sm:col-span-3">
         <NeonCard color="warning" title="RSSI">
            <DigitalDisplay value={(latestMetric?.rssi ?? 0).toFixed(1)} unit="dBm" color={rssiColor} size="lg" />
         </NeonCard>
       </div>
-      <div className="col-span-12 sm:col-span-4">
+      <div className="col-span-12 sm:col-span-3">
         <NeonCard color="secondary" title="CQI">
            <DigitalDisplay value={latestMetric?.cqi ?? 0} unit="(0-15)" color={isDark ? "text-secondary" : "text-purple-700"} size="lg" />
         </NeonCard>
       </div>
-      <div className="col-span-12 sm:col-span-4">
+      <div className="col-span-12 sm:col-span-3">
         <NeonCard color="primary" title="SNR">
            <DigitalDisplay value={(latestMetric?.snr ?? 0).toFixed(1)} unit="dB" color={isDark ? "text-primary" : "text-blue-700"} size="lg" />
+        </NeonCard>
+      </div>
+      <div className="col-span-12 sm:col-span-3">
+        <NeonCard color="success" title="RX ANTENNAS">
+           <DigitalDisplay value={latestMetric?.antennasRx ?? 0} color={isDark ? "text-success" : "text-green-600"} size="lg" />
         </NeonCard>
       </div>
 

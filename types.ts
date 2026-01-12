@@ -29,6 +29,7 @@ export interface ProcessedMetric {
   pci: number;                  // Physical Cell ID
   n0_power: number;             // Noise Power
   rank: number;                 // MIMO Rank
+  antennasRx: number;           // RX Antennas
   rx_gain: number;              // Total RX Gain
   nta_offset: number;           // N_TA Offset
   ssb_rsrp_beams: number[];     // Array of 4 RSRP values
