@@ -40,7 +40,7 @@ export const Overview: React.FC = () => {
 
   const renderMap = useMemo(() => ({
     'rsrp-card': () => (
-        <div className="mt-2 h-full flex flex-col justify-end pb-2">
+        <div className="w-full h-full flex flex-col justify-end pb-2">
             <DigitalDisplay value={rsrp?.toFixed(1) ?? '---'} unit={t('label_dbm')} color={(rsrp ?? -120) > -100 ? colors.primary : colors.accent} size="xl" />
             <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
                 <div className="h-full bg-primary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, ((rsrp ?? -140) + 140) * 1.5))}%` }} />
@@ -48,7 +48,7 @@ export const Overview: React.FC = () => {
         </div>
     ),
     'snr-card': () => (
-        <div className="mt-2 h-full flex flex-col justify-end pb-2">
+        <div className="w-full h-full flex flex-col justify-end pb-2">
             <DigitalDisplay value={snr?.toFixed(1) ?? '---'} unit={t('label_db')} color={colors.secondary} size="xl" />
             <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
                <div className="h-full bg-secondary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, (snr ?? 0) * 3.3))}%` }} />
@@ -56,18 +56,22 @@ export const Overview: React.FC = () => {
         </div>
     ),
     'dl-traffic': () => (
-         <div className="mt-2 h-full flex flex-col justify-end pb-2">
+         <div className="w-full h-full flex flex-col justify-end pb-2">
              <DigitalDisplay value={latestMetric?.dl_ok_delta?.toFixed(0) ?? '---'} unit={t('label_blocks_s')} color={colors.success} size="xl" />
          </div>
     ),
     'ul-traffic': () => (
-         <div className="mt-2 h-full flex flex-col justify-end pb-2">
+         <div className="w-full h-full flex flex-col justify-end pb-2">
              <DigitalDisplay value={latestMetric?.ul_ok_delta?.toFixed(0) ?? '---'} unit={t('label_blocks_s')} color={colors.primary} size="xl" />
          </div>
     ),
-    'signal-chart': () => <SignalChart data={history} />,
+    'signal-chart': () => (
+        <div className="w-full h-full">
+            <SignalChart data={history} />
+        </div>
+    ),
     'bler-gauge': () => (
-        <div className="flex flex-col justify-center h-full p-2">
+        <div className="flex flex-col justify-center h-full p-2 w-full">
              <BlerGauge label="DL BLER" value={dlBler} color="success" />
              <BlerGauge label="UL BLER" value={ulBler} color="primary" />
         </div>
@@ -80,22 +84,21 @@ export const Overview: React.FC = () => {
 
   const tabWidgets = widgets[AppTab.OVERVIEW] || {};
 
-  const meta = {
-      'rsrp-card': { title: t('metric_rsrp'), color: 'primary' },
-      'snr-card': { title: t('metric_snr'), color: 'secondary' },
-      'dl-traffic': { title: t('metric_dl_traffic'), color: 'success' },
-      'ul-traffic': { title: t('metric_ul_traffic'), color: 'primary' },
-      'signal-chart': { title: t('chart_signal'), color: 'primary' },
-      'bler-gauge': { title: t('chart_bler'), color: 'accent' },
-  } as const;
-
   return (
     <div className="w-full h-full">
        <InfiniteCanvas tabId={AppTab.OVERVIEW}>
          {Object.values(tabWidgets).map((layout) => {
            const key = layout.id as keyof typeof renderMap;
            if (!renderMap[key]) return null;
-           const info = meta[key] || { title: 'Widget', color: 'primary' };
+           // @ts-ignore
+           const info = {
+              'rsrp-card': { title: t('metric_rsrp'), color: 'primary' },
+              'snr-card': { title: t('metric_snr'), color: 'secondary' },
+              'dl-traffic': { title: t('metric_dl_traffic'), color: 'success' },
+              'ul-traffic': { title: t('metric_ul_traffic'), color: 'primary' },
+              'signal-chart': { title: t('chart_signal'), color: 'primary' },
+              'bler-gauge': { title: t('chart_bler'), color: 'accent' },
+           }[key] || { title: 'Widget', color: 'primary' };
 
            return (
              <FreeWidget

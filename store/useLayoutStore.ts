@@ -10,7 +10,7 @@ export interface WidgetLayout {
   zIndex: number;
 }
 
-interface CanvasState {
+export interface CanvasState {
   scale: number;
   positionX: number;
   positionY: number;
@@ -19,6 +19,7 @@ interface CanvasState {
 interface LayoutState {
   widgets: Record<string, Record<string, WidgetLayout>>;
   canvasStates: Record<string, CanvasState>;
+  
   updateWidget: (tabId: string, widgetId: string, updates: Partial<Omit<WidgetLayout, 'id'>>) => void;
   initWidgets: (tabId: string, defaults: Omit<WidgetLayout, 'zIndex'>[]) => void;
   bringToFront: (tabId: string, widgetId: string) => void;
@@ -27,7 +28,7 @@ interface LayoutState {
 
 export const useLayoutStore = create<LayoutState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       widgets: {},
       canvasStates: {},
 
@@ -49,6 +50,12 @@ export const useLayoutStore = create<LayoutState>()(
       initWidgets: (tabId, defaults) => {
         set((state) => {
           const currentTabWidgets = state.widgets[tabId] || {};
+          const currentCanvasState = state.canvasStates[tabId];
+          const newCanvasStates = currentCanvasState ? state.canvasStates : {
+            ...state.canvasStates,
+            [tabId]: { scale: 1, positionX: 0, positionY: 0 }
+          };
+
           const newWidgets = { ...currentTabWidgets };
           let hasChanges = false;
 
@@ -56,7 +63,6 @@ export const useLayoutStore = create<LayoutState>()(
             if (!newWidgets[def.id]) {
               newWidgets[def.id] = { 
                 ...def, 
-                
                 x: def.x ?? 50,
                 y: def.y ?? 50,
                 w: def.w ?? 300,
@@ -67,14 +73,13 @@ export const useLayoutStore = create<LayoutState>()(
             }
           });
 
-          
-          if (hasChanges || Object.keys(currentTabWidgets).length === 0) {
-            console.log(`[LayoutStore] Initialized widgets for ${tabId}:`, Object.keys(newWidgets));
+          if (hasChanges || !currentCanvasState) {
             return {
               widgets: {
                 ...state.widgets,
                 [tabId]: newWidgets
-              }
+              },
+              canvasStates: newCanvasStates
             };
           }
           return state;
@@ -113,7 +118,7 @@ export const useLayoutStore = create<LayoutState>()(
         })),
     }),
     {
-      name: 'net-metrics-layout-v10-final', 
+      name: 'net-metrics-layout-v11',
     }
   )
 );

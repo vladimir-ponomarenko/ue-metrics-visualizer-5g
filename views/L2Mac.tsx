@@ -35,14 +35,14 @@ export const L2Mac: React.FC = () => {
 
   const renderMap = useMemo(() => ({
     'dl-total': () => (
-        <div className="flex items-center justify-between h-full">
+        <div className="flex items-center justify-between h-full w-full">
            <span className={`text-4xl font-mono font-bold ${colors.success}`}>
             {new Intl.NumberFormat('en-US').format(latestMetric?.dl_ok_total ?? 0)}
           </span>
         </div>
     ),
     'ul-total': () => (
-        <div className="flex items-center justify-between h-full">
+        <div className="flex items-center justify-between h-full w-full">
           <span className={`text-4xl font-mono font-bold ${colors.primary}`}>
             {new Intl.NumberFormat('en-US').format(latestMetric?.ul_ok_total ?? 0)}
           </span>
@@ -54,40 +54,34 @@ export const L2Mac: React.FC = () => {
     'ul-rb-tb': () => <DigitalDisplay value={formatNumber(latestMetric?.ul_rb_tb, 2)} color={colors.success} size="lg" />,
     'ul-sym-tb': () => <DigitalDisplay value={formatNumber(latestMetric?.ul_sym_tb, 2)} color={colors.accent} size="lg" />,
     'dl-chart': () => (
-        <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={history}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-              {/* @ts-ignore */}
-              <XAxis dataKey="ts" hide />
-              {/* @ts-ignore */}
-              <YAxis stroke={axisColor} />
-              {/* @ts-ignore */}
-              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontFamily: 'Share Tech Mono' }} />
-              <Legend />
-              {/* @ts-ignore */}
-              <Bar dataKey="dl_ok_delta" stackId="a" fill={isDark ? "#39FF14" : "#22c55e"} name="OK" isAnimationActive={false} />
-              {/* @ts-ignore */}
-              <Bar dataKey="dl_err_delta" stackId="a" fill={isDark ? "#FF0033" : "#ef4444"} name="ERR" isAnimationActive={false} />
-            </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="ts" hide />
+                <YAxis stroke={axisColor} />
+                <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontFamily: 'Share Tech Mono' }} />
+                <Legend />
+                <Bar dataKey="dl_ok_delta" stackId="a" fill={isDark ? "#39FF14" : "#22c55e"} name="OK" isAnimationActive={false} />
+                <Bar dataKey="dl_err_delta" stackId="a" fill={isDark ? "#FF0033" : "#ef4444"} name="ERR" isAnimationActive={false} />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
     ),
     'ul-chart': () => (
-        <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={history}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-              {/* @ts-ignore */}
-              <XAxis dataKey="ts" hide />
-              {/* @ts-ignore */}
-              <YAxis stroke={axisColor} />
-              {/* @ts-ignore */}
-              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontFamily: 'Share Tech Mono' }} />
-              <Legend />
-              {/* @ts-ignore */}
-              <Bar dataKey="ul_ok_delta" stackId="a" fill={isDark ? "#00F0FF" : "#0ea5e9"} name="OK" isAnimationActive={false} />
-              {/* @ts-ignore */}
-              <Bar dataKey="ul_err_delta" stackId="a" fill={isDark ? "#FF0033" : "#ef4444"} name="ERR" isAnimationActive={false} />
-            </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={history}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="ts" hide />
+                <YAxis stroke={axisColor} />
+                <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontFamily: 'Share Tech Mono' }} />
+                <Legend />
+                <Bar dataKey="ul_ok_delta" stackId="a" fill={isDark ? "#00F0FF" : "#0ea5e9"} name="OK" isAnimationActive={false} />
+                <Bar dataKey="ul_err_delta" stackId="a" fill={isDark ? "#FF0033" : "#ef4444"} name="ERR" isAnimationActive={false} />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
     )
   }), [history, latestMetric, isDark, t, gridColor, axisColor, tooltipBg, tooltipBorder, tooltipText, colors]);
 
@@ -106,29 +100,29 @@ export const L2Mac: React.FC = () => {
   ];
 
   useEffect(() => {
-    
     initWidgets(AppTab.L2_MAC, defaults);
   }, [initWidgets]);
 
   const tabWidgets = widgets[AppTab.L2_MAC] || {};
-  const meta = {
-      'dl-total': { title: 'TOTAL DL', color: 'success' },
-      'ul-total': { title: 'TOTAL UL', color: 'primary' },
-      'bad-dci': { title: 'BAD DCI', color: 'warning' },
-      'ul-code-rate': { title: 'CODE RATE', color: 'secondary' },
-      'ul-bps': { title: 'BITS/SYM', color: 'primary' },
-      'ul-rb-tb': { title: 'RB/TB', color: 'success' },
-      'ul-sym-tb': { title: 'SYM/TB', color: 'accent' },
-      'dl-chart': { title: t('chart_dl_perf'), color: 'success' },
-      'ul-chart': { title: t('chart_ul_perf'), color: 'primary' },
-  } as const;
 
   return (
     <InfiniteCanvas tabId={AppTab.L2_MAC}>
       {Object.values(tabWidgets).map((layout) => {
         const key = layout.id as keyof typeof renderMap;
         if (!renderMap[key]) return null;
-        const info = meta[key] || { title: 'Metric', color: 'primary' };
+        
+        // @ts-ignore
+        const info = {
+           'dl-total': { title: 'TOTAL DL', color: 'success' },
+           'ul-total': { title: 'TOTAL UL', color: 'primary' },
+           'bad-dci': { title: 'BAD DCI', color: 'warning' },
+           'ul-code-rate': { title: 'CODE RATE', color: 'secondary' },
+           'ul-bps': { title: 'BITS/SYM', color: 'primary' },
+           'ul-rb-tb': { title: 'RB/TB', color: 'success' },
+           'ul-sym-tb': { title: 'SYM/TB', color: 'accent' },
+           'dl-chart': { title: t('chart_dl_perf'), color: 'success' },
+           'ul-chart': { title: t('chart_ul_perf'), color: 'primary' },
+        }[key] || { title: 'Metric', color: 'primary' };
 
         return (
           <FreeWidget

@@ -33,40 +33,35 @@ export const L1Phy: React.FC = () => {
     'rx-gain': () => <DigitalDisplay value={latestMetric?.rx_gain ?? 0} unit="dB" color={isDark ? "text-success" : "text-green-600"} size="md" />,
     'nta-offset': () => <DigitalDisplay value={latestMetric?.nta_offset ?? 0} unit="samples" color={isDark ? "text-warning" : "text-yellow-600"} size="md" />,
     'cqi-chart': () => (
-        <ResponsiveContainer width="100%" height="100%">
-             <LineChart data={history}>
-               <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-               {/* @ts-ignore */}
-               <XAxis dataKey="ts" hide />
-               {/* @ts-ignore */}
-               <YAxis domain={[0, 15]} stroke={isDark ? "#E000FF" : "#9900FF"} />
-               {/* @ts-ignore */}
-               <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText }} itemStyle={{ fontFamily: 'Share Tech Mono' }} />
-               {/* @ts-ignore */}
-               <Line type="stepAfter" dataKey="cqi" stroke={isDark ? "#E000FF" : "#9900FF"} strokeWidth={2} dot={false} isAnimationActive={false} />
-             </LineChart>
-        </ResponsiveContainer>
+        <div className="w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+                 <LineChart data={history}>
+                   <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                   <XAxis dataKey="ts" hide />
+                   <YAxis domain={[0, 15]} stroke={isDark ? "#E000FF" : "#9900FF"} />
+                   <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText }} itemStyle={{ fontFamily: 'Share Tech Mono' }} />
+                   <Line type="stepAfter" dataKey="cqi" stroke={isDark ? "#E000FF" : "#9900FF"} strokeWidth={2} dot={false} isAnimationActive={false} />
+                 </LineChart>
+            </ResponsiveContainer>
+        </div>
     ),
     'scatter-chart': () => (
-        <ResponsiveContainer width="100%" height="100%">
-             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 30 }}>
-               <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-               {/* @ts-ignore */}
-               <XAxis type="number" dataKey="rsrp" name="RSRP" unit="dBm" stroke={axisColorX} tick={{ fontSize: 10, fill: axisColorX }} domain={['auto', 'auto']}>
-                  <Label value="RSRP (dBm)" offset={-10} position="insideBottom" fill={axisColorX} style={{fontSize: 12}} />
-               </XAxis>
-               {/* @ts-ignore */}
-               <YAxis type="number" dataKey="rssi" name="RSSI" unit="dBm" stroke={axisColorY} tick={{ fontSize: 10, fill: axisColorY }} domain={['auto', 'auto']}>
-                  <Label value="RSSI (dBm)" angle={-90} position="insideLeft" fill={axisColorY} style={{fontSize: 12}} />
-               </YAxis>
-               {/* @ts-ignore */}
-               <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, zIndex: 100, fontFamily: 'Share Tech Mono', fontSize: '12px' }} isAnimationActive={false} />
-               {/* @ts-ignore */}
-               <ZAxis range={[60, 60]} />
-               {/* @ts-ignore */}
-               <Scatter name="Signal" data={history} fill={scatterColor} isAnimationActive={false} />
-             </ScatterChart>
-        </ResponsiveContainer>
+        <div className="w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+                 <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 30 }}>
+                   <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                   <XAxis type="number" dataKey="rsrp" name="RSRP" unit="dBm" stroke={axisColorX} tick={{ fontSize: 10, fill: axisColorX }} domain={['auto', 'auto']}>
+                      <Label value="RSRP (dBm)" offset={-10} position="insideBottom" fill={axisColorX} style={{fontSize: 12}} />
+                   </XAxis>
+                   <YAxis type="number" dataKey="rssi" name="RSSI" unit="dBm" stroke={axisColorY} tick={{ fontSize: 10, fill: axisColorY }} domain={['auto', 'auto']}>
+                      <Label value="RSSI (dBm)" angle={-90} position="insideLeft" fill={axisColorY} style={{fontSize: 12}} />
+                   </YAxis>
+                   <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, zIndex: 100, fontFamily: 'Share Tech Mono', fontSize: '12px' }} isAnimationActive={false} />
+                   <ZAxis range={[60, 60]} />
+                   <Scatter name="Signal" data={history} fill={scatterColor} isAnimationActive={false} />
+                 </ScatterChart>
+            </ResponsiveContainer>
+        </div>
     ),
     'beam-table': () => (
         <div className="overflow-y-auto h-full pr-2 scrollbar-thin">
@@ -113,31 +108,31 @@ export const L1Phy: React.FC = () => {
   ];
 
   useEffect(() => {
-    
     initWidgets(AppTab.L1_PHY, defaults);
   }, [initWidgets]);
 
   const tabWidgets = widgets[AppTab.L1_PHY] || {};
-  const meta = {
-      'rssi': { title: 'RSSI', color: 'warning' },
-      'cqi': { title: 'CQI', color: 'secondary' },
-      'snr': { title: 'SNR', color: 'primary' },
-      'rx-antennas': { title: 'RX ANT', color: 'success' },
-      'mimo-rank': { title: 'MIMO', color: 'primary' },
-      'n0-noise': { title: 'N0 PWR', color: 'secondary' },
-      'rx-gain': { title: 'GAIN', color: 'success' },
-      'nta-offset': { title: 'N_TA', color: 'warning' },
-      'cqi-chart': { title: t('chart_cqi'), color: 'secondary' },
-      'scatter-chart': { title: t('chart_rssi_rsrp'), color: 'warning' },
-      'beam-table': { title: 'BEAMS', color: 'primary' },
-  } as const;
-
+  
   return (
     <InfiniteCanvas tabId={AppTab.L1_PHY}>
       {Object.values(tabWidgets).map((layout) => {
         const key = layout.id as keyof typeof renderMap;
         if (!renderMap[key]) return null;
-        const info = meta[key] || { title: 'Data', color: 'primary' };
+        
+        // @ts-ignore
+        const info = {
+           'rssi': { title: 'RSSI', color: 'warning' },
+           'cqi': { title: 'CQI', color: 'secondary' },
+           'snr': { title: 'SNR', color: 'primary' },
+           'rx-antennas': { title: 'RX ANT', color: 'success' },
+           'mimo-rank': { title: 'MIMO', color: 'primary' },
+           'n0-noise': { title: 'N0 PWR', color: 'secondary' },
+           'rx-gain': { title: 'GAIN', color: 'success' },
+           'nta-offset': { title: 'N_TA', color: 'warning' },
+           'cqi-chart': { title: t('chart_cqi'), color: 'secondary' },
+           'scatter-chart': { title: t('chart_rssi_rsrp'), color: 'warning' },
+           'beam-table': { title: 'BEAMS', color: 'primary' },
+        }[key] || { title: 'Data', color: 'primary' };
 
         return (
           <FreeWidget

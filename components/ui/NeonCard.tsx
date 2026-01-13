@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { GripVertical } from 'lucide-react'; 
+import { GripVertical } from 'lucide-react';
 
 interface NeonCardProps {
   children: ReactNode;
@@ -9,8 +9,7 @@ interface NeonCardProps {
   color?: 'primary' | 'secondary' | 'success' | 'accent' | 'warning';
   title?: string;
   icon?: string;
-  
-  dragHandleProps?: any; 
+  dragHandleProps?: any;
   isDragging?: boolean;
 }
 
@@ -49,14 +48,12 @@ export const NeonCard: React.FC<NeonCardProps> = ({
 }) => {
   return (
     <div className={twMerge(
-      "relative bg-surface-light dark:bg-surface-dark border p-5 group transition-all duration-200 shadow-retro flex flex-col",
-      
+      "relative bg-surface-light dark:bg-surface-dark border p-5 group transition-all duration-200 shadow-retro flex flex-col box-border",
       colorMap[color],
-      
-      isDragging && "z-50 scale-105 opacity-90 shadow-2xl ring-2 ring-white/20 rotate-1",
+      isDragging && "z-50 scale-[1.02] opacity-95 shadow-2xl ring-2 ring-white/20",
       className
     )}>
-      {/* Corner Brackets (декорация) */}
+      {/* Corner Brackets */}
       <div className={clsx("absolute w-2 h-2 border-t-2 border-l-2 border-gray-400 dark:border-[#333] -top-[1px] -left-[1px] transition-all duration-300", bracketColorMap[color])} />
       <div className={clsx("absolute w-2 h-2 border-t-2 border-r-2 border-gray-400 dark:border-[#333] -top-[1px] -right-[1px] transition-all duration-300", bracketColorMap[color])} />
       <div className={clsx("absolute w-2 h-2 border-b-2 border-l-2 border-gray-400 dark:border-[#333] -bottom-[1px] -left-[1px] transition-all duration-300", bracketColorMap[color])} />
@@ -64,29 +61,28 @@ export const NeonCard: React.FC<NeonCardProps> = ({
 
       {/* Header Area */}
       {(title || icon || dragHandleProps) && (
-        <div 
+        <div
           className={clsx(
-            "flex justify-between items-start mb-4 border-b border-gray-200 dark:border-[#222] pb-2 select-none",
+            "flex justify-between items-start mb-2 border-b border-gray-200 dark:border-[#222] pb-2 select-none shrink-0",
             dragHandleProps ? "cursor-grab active:cursor-grabbing" : ""
           )}
-          {...dragHandleProps} 
+          {...dragHandleProps}
         >
           <div className="flex items-center gap-2">
-            {/* Иконка перетаскивания */}
             {dragHandleProps && (
               <GripVertical className="w-4 h-4 text-gray-300 dark:text-gray-600 opacity-50 group-hover:opacity-100 transition-opacity" />
             )}
-            
+
             {title && (
               <h3 className={clsx(
-                "text-sm font-mono uppercase tracking-[0.15em] transition-colors pointer-events-none",
+                "text-sm font-mono uppercase tracking-[0.15em] transition-colors pointer-events-none truncate",
                 textMap[color]
               )}>
                 {title}
               </h3>
             )}
           </div>
-          
+
           {icon && (
             <span className={clsx(
                 "material-icons text-xl transition-colors pointer-events-none",
@@ -99,7 +95,7 @@ export const NeonCard: React.FC<NeonCardProps> = ({
       )}
 
       {/* Content area grows to fill space */}
-      <div className="flex-1 min-h-0 relative">
+      <div className="flex-1 min-h-0 relative w-full h-full cursor-auto" onMouseDown={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>
