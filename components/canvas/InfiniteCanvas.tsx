@@ -11,7 +11,7 @@ interface InfiniteCanvasProps {
 }
 
 export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children }) => {
-  const { canvasStates, updateCanvasState } = useLayoutStore();
+  const { canvasStates, updateCanvasState, isDrawerOpen } = useLayoutStore();
   const { theme } = useTelemetryStore();
   const transformComponentRef = useRef<ReactZoomPanPinchContentRef>(null);
   const [mounted, setMounted] = useState(false);
@@ -36,8 +36,16 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children 
   return (
     <div className="w-full h-full relative overflow-hidden bg-transparent">
 
-      {/* Controls */}
-      <div className="absolute bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-auto">
+      {/*
+         Controls
+         Dynamic positioning based on Drawer State
+      */}
+      <div
+        className={clsx(
+            "absolute right-6 z-[70] flex flex-col gap-2 pointer-events-auto transition-all duration-300 ease-in-out",
+            isDrawerOpen ? "bottom-60" : "bottom-6"
+        )}
+      >
         <ControlButton
             onClick={() => transformComponentRef.current?.zoomIn(0.2)}
             icon={<ZoomIn size={18} />}
@@ -89,7 +97,7 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children 
               "opacity-40"
           )}
           style={{
-              backgroundImage: `radial-gradient(${isDark ? '#757474ff' : '#000'} 1.5px, transparent 1.5px)`,
+              backgroundImage: `radial-gradient(${isDark ? '#444' : '#000'} 1.5px, transparent 1.5px)`,
               backgroundSize: '40px 40px',
           }}
           />
@@ -110,7 +118,7 @@ const ControlButton: React.FC<{ onClick: () => void; icon: React.ReactNode, titl
             onClick();
         }}
         title={title}
-        className="w-10 h-10 bg-white/80 dark:bg-black/80 backdrop-blur-md border border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary hover:border-primary dark:hover:border-primary transition-all shadow-lg rounded-sm"
+        className="w-10 h-10 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary hover:border-primary dark:hover:border-primary transition-all shadow-[0_4px_10px_rgba(0,0,0,0.3)] rounded-sm"
     >
         {icon}
     </button>
