@@ -86,10 +86,10 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children 
           {/* BACKGROUND GRID */}
           <div className={clsx(
               "absolute top-[-5000px] left-[-5000px] right-[-5000px] bottom-[-5000px] pointer-events-none z-0",
-              isDark ? "opacity-20" : "opacity-10"
+              "opacity-40"
           )}
           style={{
-              backgroundImage: `radial-gradient(${isDark ? '#aaa' : '#000'} 1.5px, transparent 1.5px)`,
+              backgroundImage: `radial-gradient(${isDark ? '#757474ff' : '#000'} 1.5px, transparent 1.5px)`,
               backgroundSize: '40px 40px',
           }}
           />
