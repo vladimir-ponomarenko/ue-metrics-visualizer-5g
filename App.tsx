@@ -11,6 +11,13 @@ import { Settings } from './views/Settings';
 import { AppTab, ConnectionStatus } from './types';
 import i18n from './utils/i18n';
 
+
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (typeof args[0] === 'string' && args[0].includes('defaultProps will be removed')) return;
+  originalConsoleError(...args);
+};
+
 const App: React.FC = () => {
   useTelemetrySocket();
   const { status, activeTab, language, isSidebarCollapsed } = useTelemetryStore();
@@ -35,11 +42,10 @@ const App: React.FC = () => {
   return (
     <div className="relative h-screen overflow-hidden font-display selection:bg-primary selection:text-black transition-colors duration-300 bg-background-light dark:bg-bg-dark text-text-light dark:text-gray-300">
       <Sidebar />
-      <main className={`${isSidebarCollapsed ? 'ml-12' : 'ml-72'} flex flex-col h-full relative z-0 bg-white/50 dark:bg-black/50 transition-all duration-300 min-w-0`}>
+      <main className={`${isSidebarCollapsed ? 'ml-12' : 'ml-72'} flex flex-col h-full relative z-0 bg-transparent transition-all duration-300 min-w-0`}>
         <Header />
 
-        <div className="flex-1 overflow-y-auto p-6 relative">
-           {/* Disconnection Overlay */}
+        <div className="flex-1 overflow-hidden relative w-full h-full">
            {status !== ConnectionStatus.CONNECTED && (
              <div className="absolute top-4 right-4 z-50 pointer-events-none">
                 <div className="border border-accent p-2 bg-white/90 dark:bg-black/90 shadow-[0_0_20px_rgba(255,0,51,0.2)] flex items-center gap-2">
@@ -49,7 +55,7 @@ const App: React.FC = () => {
              </div>
            )}
 
-          <div className="max-w-[1920px] mx-auto min-h-full w-full">
+          <div className="w-full h-full">
             {renderContent()}
           </div>
         </div>

@@ -1,103 +1,115 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTelemetryStore } from '../store/useTelemetryStore';
-import { NeonCard } from '../components/ui/NeonCard';
+import { useLayoutStore, WidgetLayout } from '../store/useLayoutStore';
 import { DigitalDisplay } from '../components/ui/DigitalDisplay';
 import { SignalChart } from '../components/widgets/SignalChart';
 import { BlerGauge } from '../components/widgets/BlerGauge';
-import { useTranslation } from 'react-i18next';
+import { InfiniteCanvas } from '../components/canvas/InfiniteCanvas';
+import { FreeWidget } from '../components/canvas/FreeWidget';
+import { AppTab } from '../types';
+
+
+const DEFAULTS: Omit<WidgetLayout, 'zIndex'>[] = [
+  { id: 'rsrp-card',    x: 50,   y: 50,  w: 300, h: 180 },
+  { id: 'snr-card',     x: 370,  y: 50,  w: 300, h: 180 },
+  { id: 'dl-traffic',   x: 690,  y: 50,  w: 300, h: 180 },
+  { id: 'ul-traffic',   x: 1010, y: 50,  w: 300, h: 180 },
+  { id: 'signal-chart', x: 50,   y: 250, w: 940, h: 400 },
+  { id: 'bler-gauge',   x: 1010, y: 250, w: 300, h: 400 },
+];
 
 export const Overview: React.FC = () => {
   const { history, latestMetric, theme } = useTelemetryStore();
   const { t } = useTranslation();
+  const { widgets, initWidgets } = useLayoutStore();
+
   const isDark = theme === 'dark';
-
-  const rsrp = latestMetric?.rsrp ?? -120;
-  const snr = latestMetric?.snr ?? 0;
-
+  
+  const rsrp = latestMetric?.rsrp;
+  const snr = latestMetric?.snr;
   const dlBler = latestMetric ? (latestMetric.dl_err_delta / (latestMetric.dl_ok_delta + latestMetric.dl_err_delta)) * 100 : 0;
   const ulBler = latestMetric ? (latestMetric.ul_err_delta / (latestMetric.ul_ok_delta + latestMetric.ul_err_delta)) * 100 : 0;
 
-  const colorPrimary = isDark ? "text-primary text-glow-cyan" : "text-blue-700";
-  const colorSecondary = isDark ? "text-secondary text-glow-magenta" : "text-purple-700";
-  const colorSuccess = isDark ? "text-success text-glow-green" : "text-green-700";
-  const colorAccent = isDark ? "text-accent text-glow-red" : "text-red-700";
+  const colors = {
+    primary: isDark ? "text-primary text-glow-cyan" : "text-blue-700",
+    secondary: isDark ? "text-secondary text-glow-magenta" : "text-purple-700",
+    success: isDark ? "text-success text-glow-green" : "text-green-700",
+    accent: isDark ? "text-accent text-glow-red" : "text-red-700",
+  };
 
-  return (
-    <div className="grid grid-cols-12 gap-6 pb-10">
-      {/* Row 1: Key Metrics */}
-      <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-        <NeonCard color="primary" title={t('metric_rsrp')} className="h-40">
-          <div className="mt-2">
-            <DigitalDisplay
-              value={rsrp.toFixed(1)}
-              unit={t('label_dbm')}
-              color={rsrp > -100 ? colorPrimary : colorAccent}
-              size="xl"
-            />
-             <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
-                <div className="h-full bg-primary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, (rsrp + 140) * 1.5))}%` }} />
-             </div>
-          </div>
-        </NeonCard>
-      </div>
-
-      <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-        <NeonCard color="secondary" title={t('metric_snr')} className="h-40">
-          <div className="mt-2">
-            <DigitalDisplay
-              value={snr.toFixed(1)}
-              unit={t('label_db')}
-              color={colorSecondary}
-              size="xl"
-            />
-             <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
-               <div className="h-full bg-secondary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, snr * 3.3))}%` }} />
+  const renderMap = useMemo(() => ({
+    'rsrp-card': () => (
+        <div className="mt-2 h-full flex flex-col justify-end pb-2">
+            <DigitalDisplay value={rsrp?.toFixed(1) ?? '---'} unit={t('label_dbm')} color={(rsrp ?? -120) > -100 ? colors.primary : colors.accent} size="xl" />
+            <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
+                <div className="h-full bg-primary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, ((rsrp ?? -140) + 140) * 1.5))}%` }} />
             </div>
-          </div>
-        </NeonCard>
-      </div>
-
-      <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-        <NeonCard color="success" title={t('metric_dl_traffic')} className="h-40">
-           <div className="mt-2">
-             <DigitalDisplay
-                value={(latestMetric?.dl_ok_delta ?? 0).toFixed(0)}
-                unit={t('label_blocks_s')}
-                color={colorSuccess}
-                size="xl"
-              />
-          </div>
-        </NeonCard>
-      </div>
-
-      <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-        <NeonCard color="primary" title={t('metric_ul_traffic')} className="h-40">
-           <div className="mt-2">
-             <DigitalDisplay
-                value={(latestMetric?.ul_ok_delta ?? 0).toFixed(0)}
-                unit={t('label_blocks_s')}
-                color={colorPrimary}
-                size="xl"
-              />
-          </div>
-        </NeonCard>
-      </div>
-
-      {/* Row 2: Charts */}
-      <div className="col-span-12 lg:col-span-8">
-        <NeonCard color="primary" className="h-[400px]" title={t('chart_signal')}>
-           <SignalChart data={history} />
-        </NeonCard>
-      </div>
-
-      <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-        <NeonCard color="accent" className="flex-1" title={t('chart_bler')}>
-           <div className="flex flex-col justify-center h-full p-2">
+        </div>
+    ),
+    'snr-card': () => (
+        <div className="mt-2 h-full flex flex-col justify-end pb-2">
+            <DigitalDisplay value={snr?.toFixed(1) ?? '---'} unit={t('label_db')} color={colors.secondary} size="xl" />
+            <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
+               <div className="h-full bg-secondary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, (snr ?? 0) * 3.3))}%` }} />
+            </div>
+        </div>
+    ),
+    'dl-traffic': () => (
+         <div className="mt-2 h-full flex flex-col justify-end pb-2">
+             <DigitalDisplay value={latestMetric?.dl_ok_delta?.toFixed(0) ?? '---'} unit={t('label_blocks_s')} color={colors.success} size="xl" />
+         </div>
+    ),
+    'ul-traffic': () => (
+         <div className="mt-2 h-full flex flex-col justify-end pb-2">
+             <DigitalDisplay value={latestMetric?.ul_ok_delta?.toFixed(0) ?? '---'} unit={t('label_blocks_s')} color={colors.primary} size="xl" />
+         </div>
+    ),
+    'signal-chart': () => <SignalChart data={history} />,
+    'bler-gauge': () => (
+        <div className="flex flex-col justify-center h-full p-2">
              <BlerGauge label="DL BLER" value={dlBler} color="success" />
              <BlerGauge label="UL BLER" value={ulBler} color="primary" />
-           </div>
-        </NeonCard>
-      </div>
+        </div>
+    )
+  }), [t, rsrp, snr, latestMetric, history, colors, dlBler, ulBler]);
+
+  useEffect(() => {
+    initWidgets(AppTab.OVERVIEW, DEFAULTS);
+  }, [initWidgets]);
+
+  const tabWidgets = widgets[AppTab.OVERVIEW] || {};
+
+  const meta = {
+      'rsrp-card': { title: t('metric_rsrp'), color: 'primary' },
+      'snr-card': { title: t('metric_snr'), color: 'secondary' },
+      'dl-traffic': { title: t('metric_dl_traffic'), color: 'success' },
+      'ul-traffic': { title: t('metric_ul_traffic'), color: 'primary' },
+      'signal-chart': { title: t('chart_signal'), color: 'primary' },
+      'bler-gauge': { title: t('chart_bler'), color: 'accent' },
+  } as const;
+
+  return (
+    <div className="w-full h-full">
+       <InfiniteCanvas tabId={AppTab.OVERVIEW}>
+         {Object.values(tabWidgets).map((layout) => {
+           const key = layout.id as keyof typeof renderMap;
+           if (!renderMap[key]) return null;
+           const info = meta[key] || { title: 'Widget', color: 'primary' };
+
+           return (
+             <FreeWidget
+               key={layout.id}
+               tabId={AppTab.OVERVIEW}
+               layout={layout}
+               title={info.title}
+               color={info.color as any}
+             >
+               {renderMap[key]()}
+             </FreeWidget>
+           );
+         })}
+       </InfiniteCanvas>
     </div>
   );
 };

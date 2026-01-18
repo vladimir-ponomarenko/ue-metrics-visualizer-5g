@@ -1,12 +1,16 @@
-import React from 'react';
-import { useTelemetryStore } from '../store/useTelemetryStore';
-import { NeonCard } from '../components/ui/NeonCard';
-import { DigitalDisplay } from '../components/ui/DigitalDisplay';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useTelemetryStore } from '../store/useTelemetryStore';
+import { useLayoutStore, WidgetLayout } from '../store/useLayoutStore';
+import { InfiniteCanvas } from '../components/canvas/InfiniteCanvas';
+import { FreeWidget } from '../components/canvas/FreeWidget';
+import { DigitalDisplay } from '../components/ui/DigitalDisplay';
+import { AppTab } from '../types';
 
 export const L2Mac: React.FC = () => {
   const { history, latestMetric, theme } = useTelemetryStore();
+  const { widgets, initWidgets } = useLayoutStore();
   const { t } = useTranslation();
 
   const isDark = theme === 'dark';
@@ -18,146 +22,126 @@ export const L2Mac: React.FC = () => {
 
   const formatNumber = (value: number | undefined, decimals: number = 2): string => {
     if (value === undefined || value === null) return '0';
-    if (Number.isInteger(value)) {
-      return value.toString();
-    } else {
-      return value.toFixed(decimals);
-    }
+    return Number.isInteger(value) ? value.toString() : value.toFixed(decimals);
   };
 
-  const primaryColor = isDark ? "text-primary text-glow-cyan" : "text-blue-700";
-  const secondaryColor = isDark ? "text-secondary text-glow-magenta" : "text-purple-700";
-  const successColor = isDark ? "text-success text-glow-green" : "text-green-700";
-  const warningColor = isDark ? "text-warning text-glow-yellow" : "text-yellow-600";
-  const accentColor = isDark ? "text-accent text-glow-red" : "text-red-700";
+  const colors = {
+    primary: isDark ? "text-primary text-glow-cyan" : "text-blue-700",
+    secondary: isDark ? "text-secondary text-glow-magenta" : "text-purple-700",
+    success: isDark ? "text-success text-glow-green" : "text-green-700",
+    warning: isDark ? "text-warning text-glow-yellow" : "text-yellow-600",
+    accent: isDark ? "text-accent text-glow-red" : "text-red-700",
+  };
 
-  return (
-    <div className="grid grid-cols-12 gap-6 pb-10">
-      {/* Total Counters */}
-      <div className="col-span-12 grid grid-cols-2 gap-6">
-        <NeonCard color="success" className="flex items-center justify-between" title="TOTAL DL BLOCKS (OK)">
-          <span className={`text-4xl font-mono font-bold ${isDark ? "text-success text-glow-green" : "text-green-600"}`}>
+  const renderMap = useMemo(() => ({
+    'dl-total': () => (
+        <div className="flex items-center justify-between h-full">
+           <span className={`text-4xl font-mono font-bold ${colors.success}`}>
             {new Intl.NumberFormat('en-US').format(latestMetric?.dl_ok_total ?? 0)}
           </span>
-        </NeonCard>
-        <NeonCard color="primary" className="flex items-center justify-between" title="TOTAL UL BLOCKS (OK)">
-          <span className={`text-4xl font-mono font-bold ${isDark ? "text-primary text-glow-cyan" : "text-blue-600"}`}>
+        </div>
+    ),
+    'ul-total': () => (
+        <div className="flex items-center justify-between h-full">
+          <span className={`text-4xl font-mono font-bold ${colors.primary}`}>
             {new Intl.NumberFormat('en-US').format(latestMetric?.ul_ok_total ?? 0)}
           </span>
-        </NeonCard>
-      </div>
-
-      {/* Metrics Row */}
-      <div className="col-span-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-        {/* Bad DCI */}
-        <NeonCard color="warning" title="BAD DCI">
-          <DigitalDisplay
-            value={formatNumber(latestMetric?.bad_dci)}
-            color={warningColor}
-            size="lg"
-          />
-        </NeonCard>
-
-        {/* UL Code Rate */}
-        <NeonCard color="secondary" title="UL CODE RATE">
-          <DigitalDisplay
-            value={formatNumber(latestMetric?.ul_code_rate, 2)}
-            color={secondaryColor}
-            size="lg"
-          />
-        </NeonCard>
-
-        {/* UL Bits/Symbol */}
-        <NeonCard color="primary" title="UL BITS/SYMBOL">
-          <DigitalDisplay
-            value={formatNumber(latestMetric?.ul_bps, 2)}
-            color={primaryColor}
-            size="lg"
-          />
-        </NeonCard>
-
-        {/* UL RB/TB */}
-        <NeonCard color="success" title="UL RB/TB">
-          <DigitalDisplay
-            value={formatNumber(latestMetric?.ul_rb_tb, 2)}
-            color={successColor}
-            size="lg"
-          />
-        </NeonCard>
-
-        {/* UL Sym/TB */}
-        <NeonCard color="accent" title="UL SYM/TB">
-          <DigitalDisplay
-            value={formatNumber(latestMetric?.ul_sym_tb, 2)}
-            color={accentColor}
-            size="lg"
-          />
-        </NeonCard>
-      </div>
-
-      {/* DL Performance */}
-      <div className="col-span-12 lg:col-span-6">
-        <NeonCard color="success" className="h-[400px]" title={t('chart_dl_perf')}>
-          <ResponsiveContainer width="100%" height="100%">
+        </div>
+    ),
+    'bad-dci': () => <DigitalDisplay value={formatNumber(latestMetric?.bad_dci)} color={colors.warning} size="lg" />,
+    'ul-code-rate': () => <DigitalDisplay value={formatNumber(latestMetric?.ul_code_rate, 2)} color={colors.secondary} size="lg" />,
+    'ul-bps': () => <DigitalDisplay value={formatNumber(latestMetric?.ul_bps, 2)} color={colors.primary} size="lg" />,
+    'ul-rb-tb': () => <DigitalDisplay value={formatNumber(latestMetric?.ul_rb_tb, 2)} color={colors.success} size="lg" />,
+    'ul-sym-tb': () => <DigitalDisplay value={formatNumber(latestMetric?.ul_sym_tb, 2)} color={colors.accent} size="lg" />,
+    'dl-chart': () => (
+        <ResponsiveContainer width="100%" height="100%">
             <BarChart data={history}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              {/* @ts-ignore */}
               <XAxis dataKey="ts" hide />
+              {/* @ts-ignore */}
               <YAxis stroke={axisColor} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: tooltipBg,
-                  borderColor: tooltipBorder,
-                  color: tooltipText,
-                  fontFamily: 'Share Tech Mono'
-                }}
-                itemStyle={{
-                  color: tooltipText,
-                  fontFamily: 'Share Tech Mono'
-                }}
-                labelStyle={{
-                  color: tooltipText,
-                  fontFamily: 'Share Tech Mono'
-                }}
-              />
+              {/* @ts-ignore */}
+              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontFamily: 'Share Tech Mono' }} />
               <Legend />
+              {/* @ts-ignore */}
               <Bar dataKey="dl_ok_delta" stackId="a" fill={isDark ? "#39FF14" : "#22c55e"} name="OK" isAnimationActive={false} />
+              {/* @ts-ignore */}
               <Bar dataKey="dl_err_delta" stackId="a" fill={isDark ? "#FF0033" : "#ef4444"} name="ERR" isAnimationActive={false} />
             </BarChart>
-          </ResponsiveContainer>
-        </NeonCard>
-      </div>
-
-      {/* UL Performance */}
-      <div className="col-span-12 lg:col-span-6">
-        <NeonCard color="primary" className="h-[400px]" title={t('chart_ul_perf')}>
-          <ResponsiveContainer width="100%" height="100%">
+        </ResponsiveContainer>
+    ),
+    'ul-chart': () => (
+        <ResponsiveContainer width="100%" height="100%">
             <BarChart data={history}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              {/* @ts-ignore */}
               <XAxis dataKey="ts" hide />
+              {/* @ts-ignore */}
               <YAxis stroke={axisColor} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: tooltipBg,
-                  borderColor: tooltipBorder,
-                  color: tooltipText,
-                  fontFamily: 'Share Tech Mono'
-                }}
-                itemStyle={{
-                  color: tooltipText,
-                  fontFamily: 'Share Tech Mono'
-                }}
-                labelStyle={{
-                  color: tooltipText,
-                  fontFamily: 'Share Tech Mono'
-                }}
-              />
+              {/* @ts-ignore */}
+              <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontFamily: 'Share Tech Mono' }} />
               <Legend />
+              {/* @ts-ignore */}
               <Bar dataKey="ul_ok_delta" stackId="a" fill={isDark ? "#00F0FF" : "#0ea5e9"} name="OK" isAnimationActive={false} />
+              {/* @ts-ignore */}
               <Bar dataKey="ul_err_delta" stackId="a" fill={isDark ? "#FF0033" : "#ef4444"} name="ERR" isAnimationActive={false} />
             </BarChart>
-          </ResponsiveContainer>
-        </NeonCard>
-      </div>
-    </div>
+        </ResponsiveContainer>
+    )
+  }), [history, latestMetric, isDark, t, gridColor, axisColor, tooltipBg, tooltipBorder, tooltipText, colors]);
+
+  const defaults: Omit<WidgetLayout, 'zIndex'>[] = [
+      { id: 'dl-total',    x: 100,  y: 100, w: 450, h: 140 },
+      { id: 'ul-total',    x: 570,  y: 100, w: 450, h: 140 },
+      
+      { id: 'bad-dci',     x: 100,  y: 260, w: 180, h: 140 },
+      { id: 'ul-code-rate',x: 300,  y: 260, w: 180, h: 140 },
+      { id: 'ul-bps',      x: 500,  y: 260, w: 180, h: 140 },
+      { id: 'ul-rb-tb',    x: 700,  y: 260, w: 180, h: 140 },
+      { id: 'ul-sym-tb',   x: 900,  y: 260, w: 180, h: 140 },
+
+      { id: 'dl-chart',    x: 100,  y: 420, w: 480, h: 350 },
+      { id: 'ul-chart',    x: 600,  y: 420, w: 480, h: 350 },
+  ];
+
+  useEffect(() => {
+    
+    initWidgets(AppTab.L2_MAC, defaults);
+  }, [initWidgets]);
+
+  const tabWidgets = widgets[AppTab.L2_MAC] || {};
+  const meta = {
+      'dl-total': { title: 'TOTAL DL', color: 'success' },
+      'ul-total': { title: 'TOTAL UL', color: 'primary' },
+      'bad-dci': { title: 'BAD DCI', color: 'warning' },
+      'ul-code-rate': { title: 'CODE RATE', color: 'secondary' },
+      'ul-bps': { title: 'BITS/SYM', color: 'primary' },
+      'ul-rb-tb': { title: 'RB/TB', color: 'success' },
+      'ul-sym-tb': { title: 'SYM/TB', color: 'accent' },
+      'dl-chart': { title: t('chart_dl_perf'), color: 'success' },
+      'ul-chart': { title: t('chart_ul_perf'), color: 'primary' },
+  } as const;
+
+  return (
+    <InfiniteCanvas tabId={AppTab.L2_MAC}>
+      {Object.values(tabWidgets).map((layout) => {
+        const key = layout.id as keyof typeof renderMap;
+        if (!renderMap[key]) return null;
+        const info = meta[key] || { title: 'Metric', color: 'primary' };
+
+        return (
+          <FreeWidget
+            key={layout.id}
+            tabId={AppTab.L2_MAC}
+            layout={layout}
+            title={info.title}
+            color={info.color as any}
+          >
+            {renderMap[key]()}
+          </FreeWidget>
+        );
+      })}
+    </InfiniteCanvas>
   );
 };
