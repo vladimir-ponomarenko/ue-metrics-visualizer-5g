@@ -34,7 +34,14 @@ const resources = {
       status_connecting: "CONNECTING",
 
       settings_lang: "LANGUAGE",
+      settings_lang_desc: "Select system language for interface",
       settings_theme: "THEME",
+      settings_theme_desc: "Toggle between dark and light mode",
+
+      sys_title: "SYSTEM INFO",
+      sys_version: "VERSION",
+      sys_build: "BUILD",
+      sys_license: "LICENSE",
 
       log_level: "LEVEL",
       log_message: "MESSAGE",
@@ -73,7 +80,14 @@ const resources = {
       status_connecting: "ПОДКЛЮЧЕНИЕ",
 
       settings_lang: "ЯЗЫК",
+      settings_lang_desc: "Выберите язык интерфейса системы",
       settings_theme: "ТЕМА",
+      settings_theme_desc: "Переключение между темной и светлой темой",
+
+      sys_title: "СИСТЕМНАЯ ИНФОРМАЦИЯ",
+      sys_version: "ВЕРСИЯ",
+      sys_build: "СБОРКА",
+      sys_license: "ЛИЦЕНЗИЯ",
 
       log_level: "УРОВЕНЬ",
       log_message: "СООБЩЕНИЕ",

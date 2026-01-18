@@ -9,8 +9,12 @@ export const Logs: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="h-full pb-10">
-      <NeonCard color="warning" className="h-full flex flex-col" title="SYSTEM EVENT LOGS">
+    <div className="h-full p-4">
+      <NeonCard
+        color="warning"
+        className="h-full flex flex-col"
+        title="SYSTEM EVENT LOGS"
+      >
         <div className="flex-1 bg-black border border-[#222] p-4 font-mono text-xs overflow-y-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -39,7 +43,9 @@ export const Logs: React.FC = () => {
               ))}
               {logs.length === 0 && (
                 <tr>
-                   <td colSpan={3} className="py-8 text-center text-gray-600 italic">No events recorded in current session.</td>
+                   <td colSpan={3} className="py-8 text-center text-gray-600 italic">
+                     No events recorded in current session.
+                   </td>
                 </tr>
               )}
             </tbody>

@@ -12,7 +12,6 @@ export const SignalChart: React.FC<SignalChartProps> = ({ data }) => {
 
   const isDark = theme === 'dark';
   const gridColor = isDark ? '#222' : '#e5e5e5';
-
   const rsrpColor = isDark ? '#00F0FF' : '#0044FF';
   const snrColor = isDark ? '#E000FF' : '#9900FF';
 
@@ -21,17 +20,15 @@ export const SignalChart: React.FC<SignalChartProps> = ({ data }) => {
   const tooltipText = isDark ? '#fff' : '#000';
 
   return (
-    <div className="w-full h-full min-h-[300px] relative">
-      {/* Сетка на фоне только для темной темы для стиля */}
-      {isDark && <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none"></div>}
+    <div className="w-full h-full min-h-0 min-w-0 relative">
+      {isDark && <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none z-0"></div>}
 
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+        <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
 
           <XAxis
             dataKey="ts"
-            tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             hide={true}
           />
 
@@ -39,35 +36,36 @@ export const SignalChart: React.FC<SignalChartProps> = ({ data }) => {
             yAxisId="left"
             orientation="left"
             stroke={rsrpColor}
-            domain={['auto', 'auto']}
-            tick={{ fill: rsrpColor, fontSize: 11, fontFamily: 'Share Tech Mono', fontWeight: 'bold' }}
-            label={{ value: 'RSRP (dBm)', angle: -90, position: 'insideLeft', fill: rsrpColor, fontSize: 12, fontWeight: 'bold' }}
+            domain={[-130, -50]} 
+            tick={{ fill: rsrpColor, fontSize: 10, fontFamily: 'Share Tech Mono' }}
+            width={35}
+            interval="preserveStartEnd"
           />
 
           <YAxis
             yAxisId="right"
             orientation="right"
             stroke={snrColor}
-            domain={['auto', 'auto']}
-            tick={{ fill: snrColor, fontSize: 11, fontFamily: 'Share Tech Mono', fontWeight: 'bold' }}
-            label={{ value: 'SNR (dB)', angle: 90, position: 'insideRight', fill: snrColor, fontSize: 12, fontWeight: 'bold' }}
+            domain={[-5, 30]}
+            tick={{ fill: snrColor, fontSize: 10, fontFamily: 'Share Tech Mono' }}
+            width={35}
+            interval="preserveStartEnd"
           />
 
           <Tooltip
             contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText }}
-            itemStyle={{ fontFamily: 'Share Tech Mono' }}
-            labelStyle={{ fontFamily: 'Share Tech Mono', color: isDark ? '#888' : '#555' }}
-            labelFormatter={(label) => new Date(label).toLocaleTimeString()}
+            itemStyle={{ fontFamily: 'Share Tech Mono', fontSize: '12px' }}
+            labelStyle={{ display: 'none' }}
           />
 
-          <Legend wrapperStyle={{ fontFamily: 'Chakra Petch', fontSize: '12px', paddingTop: '10px' }}/>
+          <Legend wrapperStyle={{ fontSize: '10px', marginTop: '0px' }} iconSize={8} verticalAlign="top" height={20}/>
 
           <Line
             yAxisId="left"
             type="monotone"
             dataKey="rsrp"
             stroke={rsrpColor}
-            strokeWidth={3}
+            strokeWidth={2}
             dot={false}
             isAnimationActive={false}
             name="RSRP"
@@ -78,7 +76,7 @@ export const SignalChart: React.FC<SignalChartProps> = ({ data }) => {
             type="monotone"
             dataKey="snr"
             stroke={snrColor}
-            strokeWidth={3}
+            strokeWidth={2}
             dot={false}
             isAnimationActive={false}
             name="SNR"

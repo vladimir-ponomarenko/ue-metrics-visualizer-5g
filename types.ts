@@ -1,3 +1,8 @@
+/* Version Information */
+export const APP_VERSION = '2.0.2-STABLE';
+export const APP_BUILD_DATE = '2026.01.20_RC8';
+export const APP_LICENSE = 'MIT';
+
 export interface ProcessedMetric {
   ts: number;         // Unix timestamp (ms)
   rnti: number;       // UE Identity

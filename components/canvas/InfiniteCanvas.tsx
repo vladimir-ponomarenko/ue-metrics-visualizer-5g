@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { TransformWrapper, TransformComponent, ReactZoomPanPinchContentRef } from 'react-zoom-pan-pinch';
 import { useLayoutStore } from '../../store/useLayoutStore';
-import { ZoomIn, ZoomOut, Maximize, Lock } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import clsx from 'clsx';
 import { useTelemetryStore } from '../../store/useTelemetryStore';
 
@@ -14,40 +14,44 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children 
   const { canvasStates, updateCanvasState } = useLayoutStore();
   const { theme } = useTelemetryStore();
   const transformComponentRef = useRef<ReactZoomPanPinchContentRef>(null);
-  const [mounted,SxMounted] = useState(false);
-
+  const [mounted, setMounted] = useState(false);
   const savedState = canvasStates[tabId] || { scale: 1, positionX: 0, positionY: 0 };
   const isDark = theme === 'dark';
 
   useEffect(() => {
-    SxMounted(true);
+    setMounted(true);
   }, []);
 
   const handleTransformed = (ref: ReactZoomPanPinchContentRef) => {
     const { scale, positionX, positionY } = ref.instance.transformState;
-
     updateCanvasState(tabId, { scale, positionX, positionY });
+  };
+
+  const handleReset = () => {
+      if (transformComponentRef.current) {
+          transformComponentRef.current.setTransform(0, 0, 1, 500);
+      }
   };
 
   return (
     <div className="w-full h-full relative overflow-hidden bg-transparent">
 
       {/* Controls */}
-      <div className="absolute bottom-6 right-6 z-50 flex flex-col gap-2">
+      <div className="absolute bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-auto">
         <ControlButton
-            onClick={() => transformComponentRef.current?.zoomIn()}
+            onClick={() => transformComponentRef.current?.zoomIn(0.2)}
             icon={<ZoomIn size={18} />}
             title="Zoom In"
         />
         <ControlButton
-            onClick={() => transformComponentRef.current?.zoomOut()}
+            onClick={() => transformComponentRef.current?.zoomOut(0.2)}
             icon={<ZoomOut size={18} />}
             title="Zoom Out"
         />
         <ControlButton
-            onClick={() => transformComponentRef.current?.resetTransform()}
+            onClick={handleReset}
             icon={<Maximize size={18} />}
-            title="Fit to Screen"
+            title="Reset View (0,0)"
         />
       </div>
 
@@ -57,13 +61,13 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children 
         initialPositionX={savedState.positionX}
         initialPositionY={savedState.positionY}
         minScale={0.2}
-        maxScale={3}
+        maxScale={4}
         onTransformed={handleTransformed}
-        centerOnInit={!canvasStates[tabId]}
+        centerOnInit={false}
         limitToBounds={false}
         wheel={{ step: 0.05 }}
         panning={{
-            excluded: ['drag-handle', 'recharts-surface'],
+            excluded: ['drag-handle', 'widget-interactive-area'],
             velocityDisabled: true
         }}
         doubleClick={{ disabled: true }}
@@ -71,26 +75,28 @@ export const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ tabId, children 
         <TransformComponent
           wrapperClass="w-full h-full"
           contentClass="infinite-canvas-content"
-          contentStyle={{ width: '5000px', height: '5000px', cursor: 'grab' }}
+          contentStyle={{
+              minWidth: '100%',
+              minHeight: '100%',
+              width: '100vw',
+              height: '100vh',
+              cursor: 'grab'
+          }}
         >
           {/* BACKGROUND GRID */}
           <div className={clsx(
-              "absolute inset-0 pointer-events-none z-0",
+              "absolute top-[-5000px] left-[-5000px] right-[-5000px] bottom-[-5000px] pointer-events-none z-0",
               isDark ? "opacity-20" : "opacity-10"
           )}
           style={{
               backgroundImage: `radial-gradient(${isDark ? '#aaa' : '#000'} 1.5px, transparent 1.5px)`,
               backgroundSize: '40px 40px',
-              width: '100%',
-              height: '100%'
           }}
           />
-
           {/* WIDGET LAYER */}
           <div className="relative z-10 w-full h-full">
             {mounted && children}
           </div>
-
         </TransformComponent>
       </TransformWrapper>
     </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Home, Cpu, Router, Settings, Terminal, Radio, ChevronLeft, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 import { useTelemetryStore } from '../../store/useTelemetryStore';
-import { AppTab } from '../../types';
+import { AppTab, APP_VERSION } from '../../types';
 import { useTranslation } from 'react-i18next';
 
 export const Sidebar: React.FC = () => {
@@ -78,9 +78,8 @@ export const Sidebar: React.FC = () => {
 
           <div className="p-4 border-t border-border-light dark:border-grid-line bg-gray-100 dark:bg-bg-dark transition-colors duration-300 flex justify-between items-center">
             <div className="text-[10px] text-gray-500 dark:text-gray-600 font-mono">
-              V.1.0.0-STABLE
+              V.{APP_VERSION}
             </div>
-            
             {/* Collapse Button */}
             <button
               onClick={() => setSidebarCollapsed(true)}

@@ -9,14 +9,13 @@ import { InfiniteCanvas } from '../components/canvas/InfiniteCanvas';
 import { FreeWidget } from '../components/canvas/FreeWidget';
 import { AppTab } from '../types';
 
-
 const DEFAULTS: Omit<WidgetLayout, 'zIndex'>[] = [
-  { id: 'rsrp-card',    x: 50,   y: 50,  w: 300, h: 180 },
-  { id: 'snr-card',     x: 370,  y: 50,  w: 300, h: 180 },
-  { id: 'dl-traffic',   x: 690,  y: 50,  w: 300, h: 180 },
-  { id: 'ul-traffic',   x: 1010, y: 50,  w: 300, h: 180 },
-  { id: 'signal-chart', x: 50,   y: 250, w: 940, h: 400 },
-  { id: 'bler-gauge',   x: 1010, y: 250, w: 300, h: 400 },
+  { id: 'rsrp-card',    x: 100,  y: 50,  w: 300, h: 180 },
+  { id: 'snr-card',     x: 420,  y: 50,  w: 300, h: 180 },
+  { id: 'dl-traffic',   x: 740,  y: 50,  w: 300, h: 180 },
+  { id: 'ul-traffic',   x: 1060, y: 50,  w: 300, h: 180 },
+  { id: 'signal-chart', x: 100,  y: 250, w: 940, h: 400 },
+  { id: 'bler-gauge',   x: 1060, y: 250, w: 300, h: 400 },
 ];
 
 export const Overview: React.FC = () => {
@@ -25,7 +24,7 @@ export const Overview: React.FC = () => {
   const { widgets, initWidgets } = useLayoutStore();
 
   const isDark = theme === 'dark';
-  
+
   const rsrp = latestMetric?.rsrp;
   const snr = latestMetric?.snr;
   const dlBler = latestMetric ? (latestMetric.dl_err_delta / (latestMetric.dl_ok_delta + latestMetric.dl_err_delta)) * 100 : 0;
@@ -40,38 +39,42 @@ export const Overview: React.FC = () => {
 
   const renderMap = useMemo(() => ({
     'rsrp-card': () => (
-        <div className="w-full h-full flex flex-col justify-end pb-2">
-            <DigitalDisplay value={rsrp?.toFixed(1) ?? '---'} unit={t('label_dbm')} color={(rsrp ?? -120) > -100 ? colors.primary : colors.accent} size="xl" />
-            <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
+        <div className="w-full h-full flex flex-col">
+            <div className="flex-1 min-h-0">
+               <DigitalDisplay value={rsrp?.toFixed(1) ?? '---'} unit={t('label_dbm')} color={(rsrp ?? -120) > -100 ? colors.primary : colors.accent} size="xl" />
+            </div>
+            {/* Scaling Bar */}
+            <div className="w-full h-[15%] bg-gray-200 dark:bg-[#222] mt-auto relative overflow-hidden shrink-0">
                 <div className="h-full bg-primary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, ((rsrp ?? -140) + 140) * 1.5))}%` }} />
             </div>
         </div>
     ),
     'snr-card': () => (
-        <div className="w-full h-full flex flex-col justify-end pb-2">
-            <DigitalDisplay value={snr?.toFixed(1) ?? '---'} unit={t('label_db')} color={colors.secondary} size="xl" />
-            <div className="w-full h-2 bg-gray-200 dark:bg-[#222] mt-4 relative overflow-hidden">
+        <div className="w-full h-full flex flex-col">
+            <div className="flex-1 min-h-0">
+                <DigitalDisplay value={snr?.toFixed(1) ?? '---'} unit={t('label_db')} color={colors.secondary} size="xl" />
+            </div>
+            {/* Scaling Bar */}
+            <div className="w-full h-[15%] bg-gray-200 dark:bg-[#222] mt-auto relative overflow-hidden shrink-0">
                <div className="h-full bg-secondary transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, (snr ?? 0) * 3.3))}%` }} />
             </div>
         </div>
     ),
     'dl-traffic': () => (
-         <div className="w-full h-full flex flex-col justify-end pb-2">
+         <div className="w-full h-full">
              <DigitalDisplay value={latestMetric?.dl_ok_delta?.toFixed(0) ?? '---'} unit={t('label_blocks_s')} color={colors.success} size="xl" />
          </div>
     ),
     'ul-traffic': () => (
-         <div className="w-full h-full flex flex-col justify-end pb-2">
+         <div className="w-full h-full">
              <DigitalDisplay value={latestMetric?.ul_ok_delta?.toFixed(0) ?? '---'} unit={t('label_blocks_s')} color={colors.primary} size="xl" />
          </div>
     ),
     'signal-chart': () => (
-        <div className="w-full h-full">
-            <SignalChart data={history} />
-        </div>
+        <SignalChart data={history} />
     ),
     'bler-gauge': () => (
-        <div className="flex flex-col justify-center h-full p-2 w-full">
+        <div className="flex flex-col justify-center h-full w-full gap-4 overflow-hidden">
              <BlerGauge label="DL BLER" value={dlBler} color="success" />
              <BlerGauge label="UL BLER" value={ulBler} color="primary" />
         </div>

@@ -16,29 +16,45 @@ export const DigitalDisplay: React.FC<DigitalDisplayProps> = ({
   size = 'lg',
   color = 'text-white'
 }) => {
-  const sizeClasses = {
-    sm: 'text-lg',
-    md: 'text-2xl',
-    lg: 'text-4xl',
-    xl: 'text-6xl'
+  const sizeMap = {
+    sm: '15cqh',
+    md: '25cqh',
+    lg: '35cqh',
+    xl: '45cqh'
   };
 
+  const fontSize = sizeMap[size] || '30cqh';
+
   return (
-    <div className="flex flex-col">
-      {label && <span className="text-xs text-gray-500 font-mono uppercase tracking-wider mb-1">{label}</span>}
-      <div className="flex items-baseline gap-2">
-        <span className={clsx(
-          "font-mono font-bold tracking-tighter drop-shadow-md",
-          sizeClasses[size],
-          color
-        )}>
+    <div className="flex flex-col justify-center h-full w-full">
+      {label && (
+        <span
+          className="text-gray-500 font-mono uppercase tracking-wider mb-auto"
+          style={{ fontSize: '10cqh', lineHeight: '1' }}
+        >
+          {label}
+        </span>
+      )}
+
+      <div className="flex items-baseline gap-[1cqw]">
+        <span
+          className={clsx(
+            "font-mono font-bold tracking-tighter drop-shadow-md leading-none",
+            color
+          )}
+          style={{ fontSize: fontSize }}
+        >
           {value}
         </span>
+
         {unit && (
-          <span className={clsx(
-            "text-xs font-mono font-bold border border-white/20 px-1 rounded-sm",
-            color.replace('text-', 'text-opacity-70 text-')
-          )}>
+          <span
+            className={clsx(
+              "font-mono font-bold border border-current px-[0.5cqw] rounded-sm opacity-70",
+              color
+            )}
+            style={{ fontSize: '12cqh', lineHeight: '1.2' }}
+          >
             {unit}
           </span>
         )}
