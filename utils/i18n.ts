@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 

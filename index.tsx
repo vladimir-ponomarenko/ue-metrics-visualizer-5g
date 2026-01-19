@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
