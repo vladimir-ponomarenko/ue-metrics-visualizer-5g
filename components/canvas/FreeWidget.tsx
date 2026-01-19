@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import React, { memo, useState, useCallback, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Rnd } from 'react-rnd';

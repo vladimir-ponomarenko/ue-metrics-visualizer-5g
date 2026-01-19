@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import React from 'react';
 import { Home, Cpu, Router, Settings, Terminal, Radio, ChevronLeft, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';

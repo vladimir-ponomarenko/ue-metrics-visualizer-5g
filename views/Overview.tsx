@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTelemetryStore } from '../store/useTelemetryStore';

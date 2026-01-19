@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 

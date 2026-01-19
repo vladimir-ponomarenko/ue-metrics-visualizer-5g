@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 /* Version Information */
 export const APP_VERSION = '2.0.2-STABLE';
 export const APP_BUILD_DATE = '2026.01.20_RC8';

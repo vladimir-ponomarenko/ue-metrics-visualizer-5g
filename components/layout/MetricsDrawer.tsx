@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 vladimir-ponomarenko
+
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronUp, ChevronDown, LayoutGrid } from 'lucide-react';
